@@ -9,7 +9,7 @@ export default function Home() {
         <h2 className="logo">ResidenceMS</h2>
 
         <div className="nav-buttons">
-          <Link to="/" className="btn btn-outline">
+          <Link to="/login" className="btn btn-outline">
             Login
           </Link>
           <Link to="/signup" className="btn btn-primary">
@@ -30,7 +30,7 @@ export default function Home() {
           <Link to="/signup" className="btn btn-primary">
             Get Started
           </Link>
-          <Link to="/" className="btn btn-outline">
+          <Link to="/login" className="btn btn-outline">
             Login
           </Link>
         </div>

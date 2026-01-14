@@ -1,48 +1,79 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../services/auth.service"; // ✅ ONLY login
-import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 import "../styles/auth.css";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { role } = useAuth();
+  const [role, setRole] = useState("resident");
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      await login(email, password);
+    setLoading(true);
 
-      if (role === "ADMIN") navigate("/admin");
-      else navigate("/resident");
-    } catch (err) {
-      alert(err.message);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert(error.message);
+      setLoading(false);
+      return;
     }
-  }
+
+    // Redirect based on role
+    if (role === "admin") navigate("/admin");
+    else navigate("/resident");
+
+    setLoading(false);
+  };
 
   return (
-    <form className="auth-container" onSubmit={handleLogin}>
-      <h2>Login</h2>
+    <div className="auth-page">
+      {/* Top Right Back */}
+      <Link to="/" className="back-home">
+        ← Back to Home
+      </Link>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+      <div className="auth-card">
+        <h2>Login</h2>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-      <button type="submit">Login</button>
-    </form>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="resident">Resident</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Resident? <Link to="/signup">Create an account</Link>
+        </p>
+      </div>
+    </div>
   );
 }
