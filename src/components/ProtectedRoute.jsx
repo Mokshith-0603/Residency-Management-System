@@ -1,14 +1,24 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children, role }) {
-  const { user, loading, userRole } = useAuth();
+export default function ProtectedRoute({ children, allowedRole }) {
+  const { user, role, loading } = useAuth();
 
-  if (loading) return null;
+  // 1️⃣ Wait for auth state
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-  if (!user) return <Navigate to="/login" />;
+  // 2️⃣ Not logged in
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  if (role && role !== userRole) return <Navigate to="/" />;
+  // 3️⃣ Role mismatch (THIS WAS YOUR BUG)
+  if (allowedRole && role !== allowedRole) {
+    return <Navigate to="/" replace />;
+  }
 
+  // 4️⃣ Access granted
   return children;
 }

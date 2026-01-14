@@ -5,17 +5,16 @@ import "../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("resident");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    // 1️⃣ Login
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -26,19 +25,34 @@ export default function Login() {
       return;
     }
 
-    // Redirect based on role
-    if (role === "admin") navigate("/admin");
-    else navigate("/resident");
+    const userId = data.user.id;
+
+    // 2️⃣ Fetch role from DB
+    const { data: userData, error: roleError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (roleError || !userData) {
+      alert("Unable to fetch user role");
+      setLoading(false);
+      return;
+    }
+
+    // 3️⃣ Redirect based on role
+    if (userData.role === "ADMIN") {
+      navigate("/admin", { replace: true });
+    } else {
+      navigate("/resident", { replace: true });
+    }
 
     setLoading(false);
   };
 
   return (
     <div className="auth-page">
-      {/* Top Right Back */}
-      <Link to="/" className="back-home">
-        ← Back to Home
-      </Link>
+      <Link to="/" className="back-home">← Back to Home</Link>
 
       <div className="auth-card">
         <h2>Login</h2>
@@ -46,7 +60,7 @@ export default function Login() {
         <form onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="Email address"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -60,18 +74,13 @@ export default function Login() {
             required
           />
 
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="resident">Resident</option>
-            <option value="admin">Admin</option>
-          </select>
-
-          <button type="submit" disabled={loading}>
+          <button disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="auth-footer">
-          Resident? <Link to="/signup">Create an account</Link>
+        <p>
+          New user? <Link to="/signup">Create account</Link>
         </p>
       </div>
     </div>

@@ -11,27 +11,34 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    const { error } = await supabase.auth.signUp({
+    // 1. Create auth user
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) {
       alert(error.message);
-    } else {
-      alert("Account created successfully!");
-      navigate("/login");
+      return;
     }
+
+    // 2. Insert into public.users table
+    await supabase.from("users").insert([
+      {
+        id: data.user.id,
+        email,
+        role: "RESIDENT", // default role
+      },
+    ]);
+
+    alert("Account created! Please login.");
+    navigate("/login");
   };
 
   return (
     <div className="auth-page">
-      {/* Back to home */}
-      <Link to="/" className="back-home">
-        ← Back to Home
-      </Link>
+      <Link to="/" className="back-home">← Back to Home</Link>
 
-      {/* Signup Card */}
       <div className="auth-card">
         <h2>Resident Signup</h2>
 
