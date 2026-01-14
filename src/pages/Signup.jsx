@@ -4,35 +4,63 @@ import { supabase } from "../lib/supabaseClient";
 import "../styles/auth.css";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [houseNo, setHouseNo] = useState(""); // for admin reference only
+  const [phone, setPhone] = useState("");
+  const [moveInDate, setMoveInDate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    // 1. Create auth user
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    // 2. Insert into public.users table
-    await supabase.from("users").insert([
-      {
-        id: data.user.id,
+    try {
+      /* 1️⃣ Auth signup */
+      const { data, error } = await supabase.auth.signUp({
         email,
-        role: "RESIDENT", // default role
-      },
-    ]);
+        password,
+      });
+      if (error) throw error;
 
-    alert("Account created! Please login.");
-    navigate("/login");
+      const userId = data.user.id;
+
+      /* 2️⃣ User role */
+      const { error: userError } = await supabase
+        .from("users")
+        .upsert(
+          { id: userId, email, role: "RESIDENT" },
+          { onConflict: "id" }
+        );
+      if (userError) throw userError;
+
+      /* 3️⃣ Resident profile (NO house link yet) */
+      const { error: residentError } = await supabase
+        .from("residents")
+        .insert({
+          user_id: userId,
+          requested_house_no: houseNo, // optional column
+          profile: {
+            name,
+            phone,
+            move_in_date: moveInDate,
+            status: "Pending Approval",
+          },
+        });
+
+      if (residentError) throw residentError;
+
+      alert("Signup successful! Please login.");
+      navigate("/login");
+    } catch (err) {
+      console.error("Signup failed:", err);
+      alert("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,6 +71,37 @@ export default function Signup() {
         <h2>Resident Signup</h2>
 
         <form onSubmit={handleSignup}>
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Preferred House Number"
+            value={houseNo}
+            onChange={(e) => setHouseNo(e.target.value)}
+            required
+          />
+
+          <input
+            type="tel"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+
+          <input
+            type="date"
+            value={moveInDate}
+            onChange={(e) => setMoveInDate(e.target.value)}
+            required
+          />
+
           <input
             type="email"
             placeholder="Email address"
@@ -59,7 +118,9 @@ export default function Signup() {
             required
           />
 
-          <button type="submit">Create Account</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Creating account..." : "Create Account"}
+          </button>
         </form>
 
         <p className="auth-footer">

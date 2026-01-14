@@ -9,12 +9,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getSession = async () => {
+    let mounted = true;
+
+    const loadSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      if (!session) {
+      if (!mounted) return;
+
+      if (!session?.user) {
         setUser(null);
         setRole(null);
         setLoading(false);
@@ -23,29 +27,52 @@ export function AuthProvider({ children }) {
 
       setUser(session.user);
 
-      // 🔑 Fetch role SAFELY
       const { data, error } = await supabase
         .from("users")
         .select("role")
         .eq("id", session.user.id)
         .single();
 
-      if (!error && data) {
+      if (!error && data && mounted) {
         setRole(data.role);
       }
 
       setLoading(false);
     };
 
-    getSession();
+    loadSession();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      getSession();
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+
+      if (!session?.user) {
+        setUser(null);
+        setRole(null);
+        setLoading(false);
+        return;
+      }
+
+      setUser(session.user);
+
+      supabase
+        .from("users")
+        .select("role")
+        .eq("id", session.user.id)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data && mounted) {
+            setRole(data.role);
+          }
+          setLoading(false);
+        });
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -14,7 +14,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Protected */}
+      {/* Admin */}
       <Route
         path="/admin"
         element={
@@ -24,6 +24,7 @@ export default function App() {
         }
       />
 
+      {/* Resident */}
       <Route
         path="/resident"
         element={
@@ -32,6 +33,9 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }

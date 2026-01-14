@@ -2,10 +2,13 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function ResidentRoute({ children }) {
-  const { role, loading } = useAuth();
+  const { user, role, loading } = useAuth();
 
-  if (loading) return <p>Loading...</p>;
-  if (role !== "RESIDENT") return <Navigate to="/login" replace />;
+  if (loading) return null;
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (role !== "RESIDENT") return <Navigate to="/admin" replace />;
 
   return children;
 }
