@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../services/supabase";
+import { supabase } from "../lib/supabaseClient";
 
 const AuthContext = createContext();
 
@@ -9,38 +9,48 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        setUser(data.session.user);
-        fetchRole(data.session.user.id);
-      }
-      setLoading(false);
-    });
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        fetchRole(session.user.id);
-      } else {
+      if (!session) {
         setUser(null);
         setRole(null);
+        setLoading(false);
+        return;
       }
+
+      setUser(session.user);
+
+      // 🔑 Fetch role SAFELY
+      const { data, error } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+      if (!error && data) {
+        setRole(data.role);
+      }
+
+      setLoading(false);
+    };
+
+    getSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      getSession();
     });
+
+    return () => subscription.unsubscribe();
   }, []);
-
-  async function fetchRole(userId) {
-    const { data } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", userId)
-      .single();
-
-    setRole(data?.role);
-  }
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
