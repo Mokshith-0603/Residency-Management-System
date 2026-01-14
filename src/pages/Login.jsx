@@ -5,6 +5,7 @@ import "../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    // 1️⃣ Login
+    // 1️⃣ Login user
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -27,7 +28,7 @@ export default function Login() {
 
     const userId = data.user.id;
 
-    // 2️⃣ Fetch role from DB
+    // 2️⃣ Fetch role from public.users
     const { data: userData, error: roleError } = await supabase
       .from("users")
       .select("role")
@@ -35,7 +36,8 @@ export default function Login() {
       .single();
 
     if (roleError || !userData) {
-      alert("Unable to fetch user role");
+      alert("Role not assigned. Contact admin.");
+      await supabase.auth.signOut();
       setLoading(false);
       return;
     }
@@ -43,8 +45,11 @@ export default function Login() {
     // 3️⃣ Redirect based on role
     if (userData.role === "ADMIN") {
       navigate("/admin", { replace: true });
-    } else {
+    } else if (userData.role === "RESIDENT") {
       navigate("/resident", { replace: true });
+    } else {
+      alert("Invalid role");
+      await supabase.auth.signOut();
     }
 
     setLoading(false);
@@ -60,7 +65,7 @@ export default function Login() {
         <form onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -74,13 +79,13 @@ export default function Login() {
             required
           />
 
-          <button disabled={loading}>
+          <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p>
-          New user? <Link to="/signup">Create account</Link>
+        <p className="auth-footer">
+          Only admin-created users can log in
         </p>
       </div>
     </div>
