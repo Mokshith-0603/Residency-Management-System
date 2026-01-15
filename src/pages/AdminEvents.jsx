@@ -98,6 +98,7 @@ export default function AdminEvents() {
 
           <textarea
             rows="3"
+            style={{ borderRadius: "16px", padding: "7px" }}
             placeholder="Event description"
             value={form.description}
             onChange={(e) =>

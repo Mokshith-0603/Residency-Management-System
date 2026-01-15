@@ -94,11 +94,16 @@ a {
    CONTENT AREA
 ====================================== */
 .admin-content {
-  flex: 1;
-  padding: 36px 42px;
-  background: #f9f6f2;
-  overflow-y: auto;
+  background:
+    radial-gradient(
+      700px 350px at 15% -10%,
+      rgba(124, 74, 45, 0.06),
+      transparent 60%
+    ),
+    #f9f6f2;
 }
+
+
 
 /* ======================================
    PAGE HEADER
@@ -241,13 +246,20 @@ a {
    COMMON CARD STYLE
 ====================================== */
 .card {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(216, 183, 163, 0.72);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
   border-radius: 22px;
   padding: 28px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+
   margin-bottom: 32px;
 }
+
 
 /* ======================================
    FORM CARD
@@ -291,8 +303,11 @@ a {
    TABLE CARD
 ====================================== */
 .table-card {
-  overflow-x: auto;
+  background: rgba(216, 183, 163, 0.72);
+  backdrop-filter: blur(16px);
+  border-radius: 22px;
 }
+
 
 /* Table */
 table {
@@ -300,9 +315,16 @@ table {
   border-collapse: collapse;
 }
 
-thead {
-  background: rgba(124, 74, 45, 0.12);
+ththead {
+  background: rgba(124, 74, 45, 0.10);
+  backdrop-filter: blur(6px);
 }
+
+thead th {
+  border-bottom: 1px solid rgba(124, 74, 45, 0.18);
+}
+
+
 
 th {
   text-align: left;
@@ -310,6 +332,8 @@ th {
   font-size: 13px;
   font-weight: 600;
   color: #2b1e16;
+  
+  
 }
 
 td {
@@ -319,9 +343,15 @@ td {
   border-bottom: 1px solid #e7dfd6;
 }
 
-tbody tr:hover {
-  background: rgba(124, 74, 45, 0.06);
+tbody tr {
+  transition: background 0.2s ease;
+  
 }
+
+tbody tr:hover {
+  background: rgba(124, 74, 45, 0.04);
+}
+
 
 /* ======================================
    STATUS BADGES
@@ -331,6 +361,7 @@ tbody tr:hover {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .badge.active {

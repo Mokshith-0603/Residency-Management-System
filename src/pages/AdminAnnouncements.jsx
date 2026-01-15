@@ -88,6 +88,7 @@ export default function AdminAnnouncements() {
 
           <textarea
             rows="4"
+            style={{ borderRadius: "16px", padding: "7px" }}
             placeholder={
               form.type === "MOM"
                 ? "Enter meeting minutes..."
