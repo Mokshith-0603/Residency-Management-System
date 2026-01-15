@@ -129,6 +129,7 @@ export default function AdminListings() {
 
           <textarea
             rows="3"
+            style={{ borderRadius: "16px", padding: "7px" }}
             placeholder="Description / Amenities"
             value={form.description}
             onChange={(e) =>

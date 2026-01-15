@@ -1,3 +1,7 @@
+/* ==================================================
+   ADMIN – GLOBAL LAYOUT
+================================================== */
+
 .admin-layout {
   display: flex;
   min-height: 100vh;
@@ -5,177 +9,70 @@
 
 .admin-content {
   flex: 1;
-  background: #f8f9fb;
+  padding: 32px 40px;
   overflow-y: auto;
-}
-.announcement-card {
-  padding: 16px;
-  background: #fff;
-  border-radius: 10px;
-  margin-bottom: 14px;
+
+  background:
+    radial-gradient(
+      700px 350px at 10% -10%,
+      rgba(124, 74, 45, 0.08),
+      transparent 60%
+    ),
+    #f9f6f2;
 }
 
-.tag {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  margin-left: 8px;
-}
-
-.tag.ann {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-
-.tag.mom {
-  background: #ede7f6;
-  color: #5e35b1;
-}
-.announcement-list {
-  margin-top: 24px;
-  display: grid;
-  gap: 16px;
-}
-
-.announcement-card {
-  padding: 16px;
-}
-
-.announcement-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tag {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.tag.ann {
-  background: #e8f0ff;
-  color: #2f5bea;
-}
-
-.tag.mom {
-  background: #fff3e0;
-  color: #d97706;
-}
-
-textarea {
-  grid-column: span 2;
-  resize: vertical;
-}
-/* ===============================
-   ANNOUNCEMENT CARDS
-================================ */
+/* ==================================================
+   ANNOUNCEMENTS – LIST
+================================================== */
 
 .announcement-list {
   margin-top: 28px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
+/* ==================================================
+   ANNOUNCEMENT CARD (GLASS)
+================================================== */
+
 .announcement-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 20px 22px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-  border-left: 6px solid #d6a84b; /* estate gold accent */
+  position: relative;
+
+  background: rgba(216, 183, 163, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 22px;
+  padding: 26px 30px;
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.announcement-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-}
-
-/* ===============================
-   HEADER
-================================ */
-
-.announcement-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.announcement-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-}
-
-/* ===============================
-   BADGES
-================================ */
-
-.announcement-badge {
-  font-size: 12px;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.announcement-badge.ann {
-  background: #eef2ff;
-  color: #3730a3;
-}
-
-.announcement-badge.mom {
-  background: #fff7ed;
-  color: #c2410c;
-}
-
-/* ===============================
-   BODY
-================================ */
-
-.announcement-body {
-  font-size: 14.5px;
-  line-height: 1.65;
-  color: #374151;
-  margin-top: 6px;
-  white-space: pre-wrap;
-}
-
-/* ===============================
-   FOOTER
-================================ */
-
-.announcement-footer {
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-end;
-}
-/* ===============================
-   ANNOUNCEMENT CARD (FINAL)
-================================ */
-
-.announcement-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 26px 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  border-left: 6px solid #d6a84b;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-bottom: 22px;
+/* Left gold accent */
+.announcement-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #c8a44c, #7c4a2d);
 }
 
 .announcement-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 26px 55px rgba(0, 0, 0, 0.12);
 }
 
-/* ===============================
-   HEADER
-================================ */
+/* ==================================================
+   CARD HEADER
+================================================== */
 
 .announcement-top {
   display: flex;
@@ -187,70 +84,162 @@ textarea {
 .announcement-title {
   font-size: 20px;
   font-weight: 700;
-  color: #1f2937;
+  color: #2b1e16;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
-/* ===============================
-   BADGE
-================================ */
+/* ==================================================
+   BADGES
+================================================== */
 
 .announcement-badge {
   font-size: 12px;
   padding: 6px 14px;
   border-radius: 999px;
   font-weight: 600;
-  height: fit-content;
   white-space: nowrap;
 }
 
 .announcement-badge.ann {
-  background: #eef2ff;
+  background: rgba(99, 102, 241, 0.15);
   color: #3730a3;
 }
 
 .announcement-badge.mom {
-  background: #fff7ed;
-  color: #c2410c;
+  background: rgba(245, 158, 11, 0.18);
+  color: #92400e;
 }
 
-/* ===============================
+/* ==================================================
    DIVIDER
-================================ */
+================================================== */
 
 .announcement-divider {
-  margin: 14px 0 18px;
+  margin: 16px 0 20px;
   height: 1px;
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.12),
     rgba(0, 0, 0, 0.02)
   );
 }
 
-/* ===============================
+/* ==================================================
    BODY CONTENT
-================================ */
+================================================== */
 
 .announcement-body {
   font-size: 15px;
   line-height: 1.75;
-  color: #374151;
-  margin: 0;
+  color: #4b3a2f;
   white-space: pre-wrap;
 }
 
-/* ===============================
+/* ==================================================
    FOOTER
-================================ */
+================================================== */
 
 .announcement-footer {
   margin-top: 22px;
   display: flex;
   justify-content: flex-end;
 }
-/* GRID */
+
+/* Delete button */
+.delete-btn {
+  background: rgba(239, 68, 68, 0.18);
+  color: #991b1b;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.28);
+}
+
+/* ==================================================
+   ANNOUNCEMENT FORM (TOP CARD)
+================================================== */
+
+.announcement-form {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+  margin-bottom: 36px;
+}
+
+.announcement-form h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2b1e16;
+  margin-bottom: 18px;
+}
+
+/* Form grid */
+.announcement-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 2fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.announcement-grid input,
+.announcement-grid select,
+.announcement-grid textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d6cfc8;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.announcement-grid textarea {
+  resize: vertical;
+  min-height: 90px;
+  
+}
+
+.announcement-grid input:focus,
+.announcement-grid select:focus,
+.announcement-grid textarea:focus {
+  outline: none;
+  border-color: #7c4a2d;
+}
+.announcement-grid textarea {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+}
+.announcement-textarea {
+  border-radius: 16px;
+  padding: 14px 16px;
+
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+
+  border: 1px solid #d6cfc8;
+  font-size: 14px;
+  line-height: 1.6;
+
+  resize: vertical;
+}
+
+.announcement-textarea:focus {
+  outline: none;
+  border-color: #7c4a2d;
+}
+
+/* ==================================================
+   LISTINGS (UNCHANGED BUT CLEANED)
+================================================== */
+
 .listing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -258,24 +247,23 @@ textarea {
   margin-top: 30px;
 }
 
-/* CARD */
 .listing-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
   padding: 18px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s ease;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease;
 }
 
 .listing-card:hover {
   transform: translateY(-6px);
 }
 
-/* IMAGE */
 .listing-image {
   height: 120px;
   border-radius: 12px;
-  background: #f1f3f5;
+  background: rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,14 +271,12 @@ textarea {
   margin-bottom: 14px;
 }
 
-/* TITLE */
 .listing-title {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 6px;
 }
 
-/* DESCRIPTION */
 .listing-desc {
   color: #555;
   font-size: 14px;
@@ -298,48 +284,26 @@ textarea {
   margin-bottom: 10px;
 }
 
-/* CONTACT */
-.listing-contact {
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-/* FOOTER */
-.listing-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-/* PRICE */
-.listing-price {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* BADGE */
 .listing-badge {
-  background: #eef2ff;
+  background: rgba(99, 102, 241, 0.15);
   color: #4f46e5;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
 }
 
-/* DELETE */
-.delete-btn {
-  background: #ffe4e6;
-  color: #dc2626;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13px;
-}
 
-.delete-btn:hover {
-  background: #fecaca;
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 768px) {
+  .announcement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-content {
+    padding: 24px;
+  }
 }
