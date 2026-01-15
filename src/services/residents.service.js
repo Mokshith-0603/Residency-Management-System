@@ -1,7 +1,7 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase, supabaseNoSession } from "../lib/supabaseClient";
 
 /* ===============================
-   ADMIN: GET ALL RESIDENTS
+   GET ALL RESIDENTS (ADMIN)
 ================================ */
 export async function getResidents() {
   const { data, error } = await supabase
@@ -9,66 +9,82 @@ export async function getResidents() {
     .select(`
       id,
       name,
+      email,
       phone,
       move_in_date,
       status,
+      user_id,
       houses (
         unit_number
       )
     `)
-    .order("unit_number", { foreignTable: "houses", ascending: true });
+    .order("unit_number", {
+      foreignTable: "houses",
+      ascending: true,
+    });
 
   if (error) throw error;
 
   return data.map((r) => ({
     id: r.id,
     name: r.name,
+    email: r.email,
     phone: r.phone,
     move_in_date: r.move_in_date,
     status: r.status,
+    user_id: r.user_id,
     house_no: r.houses?.unit_number ?? "—",
   }));
 }
 
 /* ===============================
-   ADMIN: ADD RESIDENT
+   ADD RESIDENT (NO LOGOUT FIX)
 ================================ */
 export async function addResident(payload) {
-  const houseNo = Number(payload.house_no);
+  // 1️⃣ Create auth user WITHOUT switching session
+  const { data: authData, error: authError } =
+    await supabaseNoSession.auth.signUp({
+      email: payload.email,
+      password: payload.password,
+    });
 
+  if (authError) throw authError;
+
+  const userId = authData.user.id;
+
+  // 2️⃣ Resolve house
   const { data: house, error: houseError } = await supabase
     .from("houses")
     .select("id")
-    .eq("unit_number", houseNo)
+    .eq("unit_number", Number(payload.house_no))
     .single();
 
   if (houseError || !house) {
     throw new Error("House number not found");
   }
 
-  const { error } = await supabase.from("residents").insert([
-    {
-      name: payload.name,
-      house_id: house.id,
-      phone: payload.phone,
-      move_in_date: payload.move_in_date,
-      status: payload.status,
-    },
-  ]);
+  // 3️⃣ Insert resident
+  const { error } = await supabase.from("residents").insert({
+    name: payload.name,
+    email: payload.email,
+    phone: payload.phone,
+    move_in_date: payload.move_in_date || null,
+    status: payload.status,
+    house_id: house.id,
+    user_id: userId,
+  });
 
   if (error) throw error;
 }
 
 /* ===============================
-   ADMIN: UPDATE RESIDENT
+   UPDATE RESIDENT
 ================================ */
 export async function updateResident(id, payload) {
-  const houseNo = Number(payload.house_no);
-
   const { data: house, error: houseError } = await supabase
     .from("houses")
     .select("id")
-    .eq("unit_number", houseNo)
+    .eq("unit_number", Number(payload.house_no))
     .single();
 
   if (houseError || !house) {
@@ -79,10 +95,11 @@ export async function updateResident(id, payload) {
     .from("residents")
     .update({
       name: payload.name,
-      house_id: house.id,
+      email: payload.email,
       phone: payload.phone,
-      move_in_date: payload.move_in_date,
+      move_in_date: payload.move_in_date || null,
       status: payload.status,
+      house_id: house.id,
     })
     .eq("id", id);
 
@@ -90,7 +107,7 @@ export async function updateResident(id, payload) {
 }
 
 /* ===============================
-   ADMIN: DELETE RESIDENT
+   DELETE RESIDENT
 ================================ */
 export async function deleteResident(id) {
   const { error } = await supabase
@@ -102,14 +119,14 @@ export async function deleteResident(id) {
 }
 
 /* ===============================
-   RESIDENT: GET MY PROFILE
+   RESIDENT DASHBOARD (FIXED)
 ================================ */
 export async function getMyResidentProfile(userId) {
   const { data, error } = await supabase
     .from("residents")
     .select(`
-      id,
       name,
+      email,
       phone,
       move_in_date,
       status,
@@ -120,10 +137,14 @@ export async function getMyResidentProfile(userId) {
     .eq("user_id", userId)
     .single();
 
-  if (error) return null;
+  if (error || !data) return null;
 
   return {
-    ...data,
-    house_no: data.houses?.unit_number ?? "—",
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    move_in_date: data.move_in_date,
+    status: data.status,
+    house_no: data.houses?.unit_number,
   };
 }
