@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { getAdminDashboardStats } from "../services/dashboard.service";
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
-
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  /* 🔐 Logout */
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -31,42 +22,73 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading) return <p>Loading dashboard...</p>;
-
-  if (!stats)
-    return (
-      <div style={{ padding: "40px" }}>
-        <h2>Unable to load dashboard</h2>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    );
+  if (!stats) return <p>Unable to load dashboard</p>;
 
   return (
-    <div style={{ padding: "40px" }}>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <h1>Welcome, Admin!</h1>
-        <button onClick={handleLogout}>Logout</button>
+    <>
+      {/* Header (NO LOGOUT HERE) */}
+      <div className="admin-header">
+        <h2>Sathya Sai Royal Gardens</h2>
       </div>
 
-      {/* Dashboard Cards */}
-      <div className="dashboard-grid">
-        <Card title="Happy Residents" value={`${stats.residents}+`} />
-        <Card title="No. of Houses" value={`${stats.houses}+`} />
-        <Card title="Amenities" value={`${stats.amenities}+`} />
-        <Card title="Pending Reports" value={stats.pendingReports} />
-        <Card title="Total Expenses" value={`₹ ${stats.expenses}`} />
-        <Card title="Total Income" value={`₹ ${stats.income}`} />
+      <div className="dashboard-wrapper">
+        <h1>Welcome, Admin!</h1>
+
+        <div className="dashboard-grid">
+          <Card
+            icon="😊"
+            title="Happy Residents"
+            value={`${stats.residents}+`}
+            desc="Community satisfaction"
+          />
+          <Card
+            icon="🏠"
+            title="No. of Houses"
+            value={`${stats.houses}+`}
+            desc="Occupied homes"
+          />
+          <Card
+            icon="🏊"
+            title="Amenities"
+            value={`${stats.amenities}+`}
+            desc="Community facilities"
+          />
+          <Card
+            icon="📄"
+            title="Pending Reports"
+            value={stats.pendingReports}
+            desc="Awaiting review"
+          />
+          <Card
+            icon="💰"
+            title="Total Expenses"
+            value={`₹ ${stats.expenses}`}
+            desc="Records logged"
+          />
+          <Card
+            icon="💵"
+            title="Total Income"
+            value={`₹ ${stats.income}`}
+            desc="Maintenance collected"
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-/* 🔹 Reusable Card */
-function Card({ title, value }) {
+/* ===============================
+   DASHBOARD CARD
+================================ */
+function Card({ icon, title, value, desc }) {
   return (
     <div className="dashboard-card">
-      <h3>{title}</h3>
-      <h2>{value}</h2>
+      <div className="icon">{icon}</div>
+      <div>
+        <h3>{title}</h3>
+        <h2>{value}</h2>
+        <p>{desc}</p>
+      </div>
     </div>
   );
 }
