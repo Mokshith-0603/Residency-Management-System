@@ -15,7 +15,9 @@ export default function ResidentDashboard() {
     getMyResidentProfile(user.id)
       .then((data) => {
         if (!data) {
-          setError("Your resident profile is not yet linked. Please contact admin.");
+          setError(
+            "Your resident profile is not yet linked. Please contact admin."
+          );
         } else {
           setProfile(data);
         }
@@ -35,7 +37,7 @@ export default function ResidentDashboard() {
 
   if (error) {
     return (
-      <div>
+      <div style={{ padding: "40px" }}>
         <h2>Resident Dashboard</h2>
         <p style={{ color: "red" }}>{error}</p>
         <button onClick={handleLogout}>Logout</button>
@@ -44,17 +46,17 @@ export default function ResidentDashboard() {
   }
 
   return (
-    <div>
+    <div style={{ padding: "40px" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <h1>Welcome, {profile.profile.name}</h1>
+        <h1>Welcome, {profile.name}</h1>
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      <div className="card">
-        <p><strong>House:</strong> {profile.houses.house_no}</p>
-        <p><strong>Phone:</strong> {profile.profile.phone}</p>
-        <p><strong>Move-in:</strong> {profile.profile.move_in_date}</p>
-        <p><strong>Status:</strong> {profile.profile.status}</p>
+      <div className="card" style={{ marginTop: "20px" }}>
+        <p><strong>House No:</strong> {profile.house_no ?? "—"}</p>
+        <p><strong>Phone:</strong> {profile.phone}</p>
+        <p><strong>Move-in Date:</strong> {profile.move_in_date}</p>
+        <p><strong>Status:</strong> {profile.status}</p>
       </div>
     </div>
   );

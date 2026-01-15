@@ -1,9 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
-import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
-  const { role } = useAuth();
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -15,15 +13,15 @@ export default function Sidebar() {
     <aside className="sidebar">
       <h3>Estate Manager</h3>
 
-      <Link to={role === "ADMIN" ? "/admin" : "/resident"}>Dashboard</Link>
-
-      {role === "ADMIN" && (
-        <>
-          <Link to="/admin/residents">Residents</Link>
-          <Link to="/admin/announcements">Announcements</Link>
-          <Link to="/admin/bills">Maintenance</Link>
-        </>
-      )}
+      <NavLink to="/admin" end>Dashboard</NavLink>
+      <NavLink to="/admin/residents">Residents</NavLink>
+      <NavLink to="/admin/announcements">Announcement</NavLink>
+      <NavLink to="/admin/staff">Staff</NavLink>
+      <NavLink to="/admin/events">Events</NavLink>
+      <NavLink to="/admin/listings">Listings</NavLink>
+      <NavLink to="/admin/wishlist">Wishlist</NavLink>
+      <NavLink to="/admin/bills">Maintenance Bill</NavLink>
+      <NavLink to="/admin/reports">Reports</NavLink>
 
       <button onClick={logout} className="logout-btn">
         Logout

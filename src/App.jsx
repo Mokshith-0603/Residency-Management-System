@@ -3,8 +3,11 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminResidents from "./pages/AdminResidents";
 import ResidentDashboard from "./pages/ResidentDashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminLayout from "./layouts/AdminLayout";
 
 export default function App() {
   return (
@@ -12,17 +15,19 @@ export default function App() {
       {/* Public */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      
 
-      {/* Admin */}
+      {/* Admin Routes */}
       <Route
         path="/admin"
         element={
           <ProtectedRoute allowedRole="ADMIN">
-            <AdminDashboard />
+            <AdminLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="residents" element={<AdminResidents />} />
+      </Route>
 
       {/* Resident */}
       <Route
