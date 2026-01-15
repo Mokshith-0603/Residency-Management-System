@@ -6,7 +6,7 @@ export default function Home() {
     <div className="home-container">
       {/* Navbar */}
       <nav className="home-navbar">
-        <h2 className="logo">ResidenceMS</h2>
+        <h2 className="logo">🏘️ Sathya Sai Royal Garden</h2>
 
         <div className="nav-buttons">
           <Link to="/login" className="btn btn-primary">
@@ -17,17 +17,23 @@ export default function Home() {
 
       {/* Hero Section */}
       <header className="hero-section">
+        <span className="hero-badge">Secure • Reliable • Real-time</span>
+
         <h1>Residence Management System</h1>
 
         <p>
-          A secure platform to manage residents, complaints, maintenance bills,
-          announcements and payments — all in one place.
+          A modern platform to manage residents, maintenance bills, complaints,
+          announcements, and payments — all from one secure dashboard.
         </p>
 
         <div className="hero-actions">
           <Link to="/login" className="btn btn-primary">
             Login to Dashboard
           </Link>
+
+          <a href="#features" className="btn btn-outline">
+            Explore Features
+          </a>
         </div>
 
         <p className="login-note">
@@ -36,39 +42,42 @@ export default function Home() {
       </header>
 
       {/* Features Section */}
-      <section className="features-section">
+      <section id="features" className="features-section">
         <h2>What You Can Do</h2>
+        <p className="features-subtitle">
+          Everything you need to run a residence smoothly and securely.
+        </p>
 
         <div className="features-grid">
           <div className="feature-card">
-            🏠
+            <span className="feature-icon">🏠</span>
             <h3>Resident Management</h3>
-            <p>Admins manage residents and house assignments.</p>
+            <p>Manage residents, roles, and house assignments efficiently.</p>
           </div>
 
           <div className="feature-card">
-            🧾
+            <span className="feature-icon">🧾</span>
             <h3>Maintenance Bills</h3>
-            <p>View and track monthly maintenance charges.</p>
+            <p>Auto-generated monthly bills with due dates and tracking.</p>
           </div>
 
           <div className="feature-card">
-            🛠
+            <span className="feature-icon">🛠</span>
             <h3>Complaints</h3>
-            <p>Residents can raise and monitor complaints.</p>
+            <p>Raise, track, and resolve complaints in real time.</p>
           </div>
 
           <div className="feature-card">
-            📢
+            <span className="feature-icon">📢</span>
             <h3>Announcements</h3>
-            <p>Important notices from management.</p>
+            <p>Important notices and updates from management.</p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="home-footer">
-        © {new Date().getFullYear()} Residence Management System
+        © {new Date().getFullYear()} Residence Management System. All rights reserved.
       </footer>
     </div>
   );
