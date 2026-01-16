@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
+/* -------- ADMIN PAGES -------- */
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminResidents from "./pages/AdminResidents";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
@@ -11,7 +12,9 @@ import AdminStaff from "./pages/AdminStaff";
 import AdminEvents from "./pages/AdminEvents";
 import AdminListings from "./pages/AdminListings";
 import AdminWishlist from "./pages/AdminWishlist";
+import AdminMaintenance from "./pages/AdminMaintenance";
 
+/* -------- RESIDENT PAGES -------- */
 import ResidentDashboard from "./pages/ResidentDashboard";
 
 /* ================= LAYOUT & GUARDS ================= */
@@ -41,6 +44,7 @@ export default function App() {
         <Route path="events" element={<AdminEvents />} />
         <Route path="listings" element={<AdminListings />} />
         <Route path="wishlist" element={<AdminWishlist />} />
+        <Route path="maintenance" element={<AdminMaintenance />} />
       </Route>
 
       {/* ================= RESIDENT ROUTES ================= */}

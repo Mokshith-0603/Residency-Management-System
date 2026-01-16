@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 export default function ProtectedRoute({ children, allowedRole }) {
   const { user, role, loading } = useAuth();
 
-  // 1️⃣ Wait for auth state
+  // 1️⃣ Wait for auth state to resolve
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -14,9 +14,14 @@ export default function ProtectedRoute({ children, allowedRole }) {
     return <Navigate to="/login" replace />;
   }
 
-  // 3️⃣ Role mismatch (THIS WAS YOUR BUG)
-  if (allowedRole && role !== allowedRole) {
-    return <Navigate to="/" replace />;
+  // 3️⃣ Normalize roles (CRITICAL FIX)
+  if (allowedRole) {
+    const userRole = role?.toLowerCase();
+    const allowed = allowedRole.toLowerCase();
+
+    if (userRole !== allowed) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   // 4️⃣ Access granted
