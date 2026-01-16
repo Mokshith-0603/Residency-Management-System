@@ -148,3 +148,34 @@ export async function getMyResidentProfile(userId) {
     house_no: data.houses?.unit_number,
   };
 }
+/* ===============================
+   RESIDENT DIRECTORY (PUBLIC)
+================================ */
+export async function getResidentsDirectory() {
+  const { data, error } = await supabase
+    .from("residents")
+    .select(`
+      name,
+      phone,
+      move_in_date,
+      status,
+      houses (
+        unit_number
+      )
+    `)
+    .eq("role", "resident")
+    .order("unit_number", {
+      foreignTable: "houses",
+      ascending: true,
+    });
+
+  if (error) throw error;
+
+  return data.map((r) => ({
+    name: r.name,
+    phone: r.phone,
+    move_in_date: r.move_in_date,
+    status: r.status,
+    house_no: r.houses?.unit_number ?? "—",
+  }));
+}
