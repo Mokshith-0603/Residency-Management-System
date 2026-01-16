@@ -1,0 +1,170 @@
+/* ===========================
+   RESIDENT DASHBOARD STYLES
+=========================== */
+
+.resident-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.resident-header {
+  margin-bottom: 24px;
+}
+
+.resident-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.resident-header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Card */
+.resident-card {
+  background: #e8d2c1;
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+}
+
+/* Info grid */
+.resident-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 32px;
+  margin-top: 16px;
+}
+
+.info-item {
+  font-size: 14px;
+}
+
+.info-label {
+  color: #6b7280;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #d1fae5;
+  color: #065f46;
+}
+/* ===============================
+   RESIDENTS DIRECTORY
+================================ */
+
+.directory-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.directory-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Table container */
+.directory-table-wrapper {
+  background: #d49570;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* Table */
+.directory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.directory-table thead th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #070707;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.directory-table tbody td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f1f1f1;
+  color: #111827;
+}
+
+.directory-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hover */
+.directory-table tbody tr:hover {
+  background: #fdf4ed;
+  transition: background 0.2s ease;
+}
+
+/* Name emphasis */
+.resident-name {
+  font-weight: 600;
+}
+
+/* Status badge */
+.status-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .directory-table thead {
+    display: none;
+  }
+
+  .directory-table tr {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .directory-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: none;
+  }
+
+  .directory-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+  }
+}
