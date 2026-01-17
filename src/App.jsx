@@ -12,6 +12,7 @@ import AdminStaff from "./pages/AdminStaff";
 import AdminEvents from "./pages/AdminEvents";
 import AdminListings from "./pages/AdminListings";
 import AdminWishlist from "./pages/AdminWishlist";
+import AdminMaintenance from "./pages/AdminMaintenance";
 
 /* ================= RESIDENT PAGES ================= */
 import ResidentDashboard from "./pages/resident/ResidentDashboard";
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="events" element={<AdminEvents />} />
         <Route path="listings" element={<AdminListings />} />
         <Route path="wishlist" element={<AdminWishlist />} />
+        <Route path="maintenance" element={<AdminMaintenance />} />
       </Route>
 
       {/* ================= RESIDENT ROUTES ================= */}
