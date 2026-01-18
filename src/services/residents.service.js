@@ -1,4 +1,4 @@
-import { supabase, supabaseNoSession } from "../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 
 /* ===============================
    GET ALL RESIDENTS (ADMIN)
@@ -43,9 +43,9 @@ export async function getResidents() {
 export async function addResident(payload) {
   // 1️⃣ Create auth user WITHOUT switching session
   const { data: authData, error: authError } =
-    await supabaseNoSession.auth.signUp({
+    await supabase.auth.signUp({
       email: payload.email,
-      password: payload.password,
+      password: payload.password
     });
 
   if (authError) throw authError;

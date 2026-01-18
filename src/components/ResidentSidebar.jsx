@@ -18,6 +18,7 @@ export default function ResidentSidebar() {
       <NavLink to="/resident/residents">👥 Residents</NavLink>
       <NavLink to="/resident/announcements">📢 Announcements</NavLink>
       <NavLink to="/resident/events">🎉 Events</NavLink>
+      <NavLink to="/resident/bills">🧾 Bills </NavLink>
       <NavLink to="/resident/listings">🏡 Listings</NavLink>
       <NavLink to="/resident/wishlist">⭐ Wishlist</NavLink>
       <NavLink to="/resident/complaints">🛠 Report Issue</NavLink>

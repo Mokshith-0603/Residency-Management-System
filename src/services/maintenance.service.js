@@ -1,37 +1,41 @@
-import { supabase } from "./supabase";
+import { supabase } from "../lib/supabaseClient";
 
 /* --------------------------------------------------
-   RESIDENTS
+   GET ACTIVE RESIDENTS WITH HOUSE
 -------------------------------------------------- */
-
-// Fetch all residents (used for bill generation)
-export const getAllResidents = async () => {
-  return await supabase
+export const getActiveResidents = async () => {
+  const { data, error } = await supabase
     .from("residents")
-    .select("id, name, house_no, phone");
+    .select(`
+      id,
+      house_id
+    `)
+    .eq("status", "Active");
+
+  if (error) throw error;
+
+  // Safety: only residents linked to a house
+  return (data || []).filter(r => r.house_id);
 };
 
 /* --------------------------------------------------
-   MAINTENANCE BILLS
+   GET BILLS BY MONTH & YEAR
 -------------------------------------------------- */
-
-// Get bills for selected month & year
 export const getBillsByMonthYear = async (month, year) => {
   return await supabase
     .from("maintenance_bills")
     .select(`
       id,
-      resident_id,
-      month,
-      year,
       amount,
       status,
+      month,
+      year,
       payment_mode,
-      paid_at,
       residents (
         name,
-        house_no,
-        phone
+        houses (
+          unit_number
+        )
       )
     `)
     .eq("month", month)
@@ -39,13 +43,17 @@ export const getBillsByMonthYear = async (month, year) => {
     .order("created_at", { ascending: true });
 };
 
-// Create monthly bills (one per resident)
+/* --------------------------------------------------
+   GENERATE MONTHLY BILLS (PRIMARY & ONLY METHOD)
+-------------------------------------------------- */
 export const generateMonthlyBills = async (month, year, amount) => {
-  const { data: residents, error } = await getAllResidents();
-  if (error) throw error;
+  const residents = await getActiveResidents();
+
+  if (!residents.length) return;
 
   const bills = residents.map(r => ({
     resident_id: r.id,
+    house_id: r.house_id,
     month,
     year,
     amount,
@@ -58,10 +66,8 @@ export const generateMonthlyBills = async (month, year, amount) => {
 };
 
 /* --------------------------------------------------
-   PAYMENT FLOW
+   PAYMENT ACTIONS
 -------------------------------------------------- */
-
-// STEP 1: When Pay Now is clicked (UPI opens)
 export const markPaymentInitiated = async (billId) => {
   return await supabase
     .from("maintenance_bills")
@@ -69,11 +75,9 @@ export const markPaymentInitiated = async (billId) => {
       status: "PAYMENT_INITIATED",
       payment_mode: "UPI"
     })
-    .eq("id", billId)
-    .eq("status", "UNPAID");
+    .eq("id", billId);
 };
 
-// STEP 2: Admin confirms UPI received (ONE CLICK)
 export const confirmPaymentReceived = async (billId) => {
   return await supabase
     .from("maintenance_bills")
@@ -81,16 +85,14 @@ export const confirmPaymentReceived = async (billId) => {
       status: "PAID",
       paid_at: new Date()
     })
-    .eq("id", billId)
-    .eq("status", "PAYMENT_INITIATED");
+    .eq("id", billId);
 };
 
-// CASH PAYMENT (manual only)
 export const markCashPaid = async (billId) => {
   return await supabase
     .from("maintenance_bills")
     .update({
-      status: "CASH",
+      status: "PAID",
       payment_mode: "CASH",
       paid_at: new Date()
     })
@@ -98,23 +100,47 @@ export const markCashPaid = async (billId) => {
 };
 
 /* --------------------------------------------------
-   RECEIVABLES
+   BULK PAY NOW (ADMIN)
 -------------------------------------------------- */
-
-// Unpaid residents only
-export const getReceivables = async (month, year) => {
+export const markAllPaymentsInitiated = async (month, year) => {
   return await supabase
+    .from("maintenance_bills")
+    .update({
+      status: "PAYMENT_INITIATED",
+      payment_mode: "UPI"
+    })
+    .eq("month", month)
+    .eq("year", year)
+    .eq("status", "UNPAID");
+};
+
+/* --------------------------------------------------
+   RECEIVABLES (ADMIN VIEW)
+-------------------------------------------------- */
+export const getReceivables = async (month, year) => {
+  const { data, error } = await supabase
     .from("maintenance_bills")
     .select(`
       id,
       amount,
       residents (
         name,
-        house_no,
-        phone
+        houses (
+          unit_number
+        )
       )
     `)
     .eq("status", "UNPAID")
     .eq("month", month)
     .eq("year", year);
+
+  if (error) throw error;
+
+  return data.map(bill => ({
+    id: bill.id,
+    amount: bill.amount,
+    name: bill.residents?.name ?? "—",
+    house_no: bill.residents?.houses?.unit_number ?? "—"
+  }));
 };
+

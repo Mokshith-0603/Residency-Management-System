@@ -22,6 +22,7 @@ import ResidentEvents from "./pages/resident/ResidentEvents";
 import ResidentListings from "./pages/resident/ResidentListings";
 import ResidentWishlist from "./pages/resident/ResidentWishlist";
 import ResidentComplaints from "./pages/resident/ResidentComplaints";
+import ResidentBills from "./pages/resident/ResidentBills";
 
 /* ================= LAYOUTS & GUARDS ================= */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -70,6 +71,8 @@ export default function App() {
         <Route path="listings" element={<ResidentListings />} />
         <Route path="wishlist" element={<ResidentWishlist />} />
         <Route path="complaints" element={<ResidentComplaints />} />
+        <Route path="bills" element={<ResidentBills />} />
+
       </Route>
 
       {/* ================= FALLBACK ================= */}

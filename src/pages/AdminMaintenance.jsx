@@ -16,7 +16,8 @@ import Charts from "../components/Charts";
 import {
   getBillsByMonthYear,
   getReceivables,
-  generateMonthlyBills
+  generateMonthlyBills,
+  markAllPaymentsInitiated
 } from "../services/maintenance.service";
 
 import { getOtherIncome } from "../services/income.service";
@@ -24,6 +25,8 @@ import { getExpenses } from "../services/expense.service";
 
 /* ================= UTILS ================= */
 import { generateMaintenancePDF } from "../utils/pdfGenerator";
+
+
 
 export default function AdminMaintenance() {
   /* ================= DATE STATE ================= */
@@ -37,6 +40,7 @@ export default function AdminMaintenance() {
   const [expenses, setExpenses] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
 
   /* =================================================
      LOAD ALL DATA (MEMOIZED – IMPORTANT)
@@ -131,6 +135,42 @@ export default function AdminMaintenance() {
         <p>Loading data...</p>
       ) : (
         <>
+        <button
+  style={{
+    marginBottom: "10px",
+    background: "#8b5e3c",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer"
+  }}
+  onClick={async () => {
+    await markAllPaymentsInitiated(month, year);
+    loadData();
+  }}
+>
+  Generate Pay Now for All
+</button>
+
+<button
+  style={{
+    marginBottom: "12px",
+    background: "#8b5e3c",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "6px",
+    border: "none",
+    cursor: "pointer"
+  }}
+  onClick={async () => {
+    await generateMonthlyBills(month, year, 2000);
+    loadData();
+  }}
+>
+  Generate Maintenance Bills
+</button>
+
           {/* ================= MAINTENANCE ================= */}
           <MaintenanceTable bills={bills} reload={loadData} />
 

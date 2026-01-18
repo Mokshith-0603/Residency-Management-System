@@ -28,56 +28,70 @@ export default function MaintenanceTable({ bills, reload }) {
             </tr>
           )}
 
-          {bills.map(b => (
-            <tr key={b.id}>
-              <td>{b.residents.name}</td>
-              <td>{b.residents.house_no}</td>
-              <td>₹ {b.amount}</td>
-              <td>{b.status}</td>
-              <td>
-                {b.status === "UNPAID" && (
-                  <>
-                    <a
-                      className="btn btn-primary"
-                      href={generateUPILink({
-                        amount: b.amount,
-                        residentName: b.residents.name,
-                        month: b.month,
-                        year: b.year
-                      })}
-                      onClick={async () => {
-                        await markPaymentInitiated(b.id);
-                        reload();
-                      }}
-                    >
-                      Pay Now
-                    </a>{" "}
-                    <button
-                      className="btn btn-secondary"
-                      onClick={async () => {
-                        await markCashPaid(b.id);
-                        reload();
-                      }}
-                    >
-                      Cash
-                    </button>
-                  </>
-                )}
+          {bills.map(b => {
+            const residentName = b.residents?.name ?? "—";
+            const houseNo = b.residents?.house_no ?? "—";
 
-                {b.status === "PAYMENT_INITIATED" && (
-                  <button
-                    className="btn btn-primary"
-                    onClick={async () => {
-                      await confirmPaymentReceived(b.id);
-                      reload();
-                    }}
-                  >
-                    Confirm
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
+            return (
+              <tr key={b.id}>
+                <td>{residentName}</td>
+                <td>{houseNo}</td>
+                <td>₹ {b.amount}</td>
+                <td>{b.status}</td>
+
+                <td>
+                  {b.status === "UNPAID" && (
+                    <>
+                      <a
+                        className="btn btn-primary"
+                        href={
+                          residentName !== "—"
+                            ? generateUPILink({
+                                amount: b.amount,
+                                residentName,
+                                month: b.month,
+                                year: b.year
+                              })
+                            : "#"
+                        }
+                        onClick={async e => {
+                          if (residentName === "—") {
+                            e.preventDefault();
+                            return;
+                          }
+                          await markPaymentInitiated(b.id);
+                          reload();
+                        }}
+                      >
+                        Pay Now
+                      </a>{" "}
+                      <button
+                        className="btn btn-secondary"
+                        onClick={async () => {
+                          await markCashPaid(b.id);
+                          reload();
+                        }}
+                      >
+                        Cash
+                      </button>
+                    </>
+                  )}
+
+                  {b.status === "PAYMENT_INITIATED" && (
+                    <button
+                      className="btn btn-primary"
+                      onClick={async () => {
+                        await confirmPaymentReceived(b.id);
+                        reload();
+                      }}
+                    >
+                      Confirm
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

@@ -1,4 +1,5 @@
-import { supabase } from "./supabase";
+import { supabase } from "../lib/supabaseClient";
+
 
 export const getExpenses = async (month, year) => {
   return await supabase
