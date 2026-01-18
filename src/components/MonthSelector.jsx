@@ -1,18 +1,40 @@
 export default function MonthSelector({ month, year, setMonth, setYear }) {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  const years = Array.from(
+    { length: 2035 - 2024 + 1 },
+    (_, i) => 2024 + i
+  );
+
   return (
     <div className="section-card">
       <div className="form-row">
         <select value={month} onChange={e => setMonth(+e.target.value)}>
-          {[...Array(12)].map((_, i) => (
-            <option key={i} value={i + 1}>
-              Month {i + 1}
+          {months.map((name, index) => (
+            <option key={index} value={index + 1}>
+              {name}
             </option>
           ))}
         </select>
 
         <select value={year} onChange={e => setYear(+e.target.value)}>
-          {[2024, 2025, 2026, 2027].map(y => (
-            <option key={y} value={y}>{y}</option>
+          {years.map(y => (
+            <option key={y} value={y}>
+              {y}
+            </option>
           ))}
         </select>
       </div>
