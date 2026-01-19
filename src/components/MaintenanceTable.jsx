@@ -29,8 +29,8 @@ export default function MaintenanceTable({ bills, reload }) {
           )}
 
           {bills.map(b => {
-            const residentName = b.residents?.name ?? "—";
-            const houseNo = b.residents?.house_no ?? "—";
+            const residentName = b.name ?? "—";
+            const houseNo = b.house_no ?? "—";
 
             return (
               <tr key={b.id}>
@@ -78,28 +78,27 @@ export default function MaintenanceTable({ bills, reload }) {
                   )}
 
                   {b.status === "PAYMENT_INITIATED" && (
-  <>
-    <button
-      className="btn btn-primary"
-      onClick={async () => {
-        await confirmPaymentReceived(b.id);
-        reload();
-      }}
-    >
-      Confirm
-    </button>{" "}
-    <button
-      className="btn btn-secondary"
-      onClick={async () => {
-        await markCashPaid(b.id);
-        reload();
-      }}
-    >
-      Cash
-    </button>
-  </>
-)}
-
+                    <>
+                      <button
+                        className="btn btn-primary"
+                        onClick={async () => {
+                          await confirmPaymentReceived(b.id);
+                          reload();
+                        }}
+                      >
+                        Confirm
+                      </button>{" "}
+                      <button
+                        className="btn btn-secondary"
+                        onClick={async () => {
+                          await markCashPaid(b.id);
+                          reload();
+                        }}
+                      >
+                        Cash
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             );

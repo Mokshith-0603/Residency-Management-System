@@ -185,3 +185,26 @@ export async function getResidentsDirectory() {
     house_no: r.houses?.unit_number ?? "—",
   }));
 }
+export const getResidentsMap = async () => {
+  const { data, error } = await supabase
+    .from("residents")
+    .select(`
+      id,
+      name,
+      houses (
+        unit_number
+      )
+    `);
+
+  if (error) throw error;
+
+  const map = {};
+  (data || []).forEach(r => {
+    map[r.id] = {
+      name: r.name,
+      house_no: r.houses?.unit_number ?? "—"
+    };
+  });
+
+  return map;
+};
