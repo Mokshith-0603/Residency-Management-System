@@ -14,28 +14,34 @@ export async function getResidents() {
       move_in_date,
       status,
       user_id,
-      houses (
+      houses!residents_house_id_fkey (
         unit_number
       )
-    `)
-    .order("unit_number", {
-      foreignTable: "houses",
-      ascending: true,
+    `);
+
+  if (error) {
+    console.error("Failed to load residents:", error);
+    throw error;
+  }
+
+  return (data || [])
+    .map(r => ({
+      id: r.id,
+      name: r.name,
+      email: r.email,
+      phone: r.phone,
+      move_in_date: r.move_in_date,
+      status: r.status,
+      user_id: r.user_id,
+      house_no: r.houses?.unit_number ?? "—",
+    }))
+    .sort((a, b) => {
+      if (a.house_no === "—") return 1;
+      if (b.house_no === "—") return -1;
+      return Number(a.house_no) - Number(b.house_no);
     });
-
-  if (error) throw error;
-
-  return data.map((r) => ({
-    id: r.id,
-    name: r.name,
-    email: r.email,
-    phone: r.phone,
-    move_in_date: r.move_in_date,
-    status: r.status,
-    user_id: r.user_id,
-    house_no: r.houses?.unit_number ?? "—",
-  }));
 }
+
 
 /* ===============================
    ADD RESIDENT (NO LOGOUT FIX)

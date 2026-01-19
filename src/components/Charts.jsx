@@ -7,7 +7,8 @@ import {
   Tooltip,
   Legend,
   LineElement,
-  PointElement
+  PointElement,
+  Filler
 } from "chart.js";
 import { Bar, Pie, Line } from "react-chartjs-2";
 
@@ -19,14 +20,19 @@ ChartJS.register(
   Tooltip,
   Legend,
   LineElement,
-  PointElement
+  PointElement,
+  Filler
 );
 
 export default function Charts({ bills, otherIncome, expenses, year }) {
   /* ================= CALCULATIONS ================= */
 
+  // ✅ COUNT ONLY ACTUAL PAYMENTS
   const maintenanceIncome = bills.reduce(
-    (sum, b) => sum + (b.status !== "UNPAID" ? Number(b.amount) : 0),
+    (sum, b) =>
+      b.status === "PAID" || b.status === "CASH"
+        ? sum + Number(b.amount)
+        : sum,
     0
   );
 
@@ -56,20 +62,35 @@ export default function Charts({ bills, otherIncome, expenses, year }) {
 
   /* ================= PIE ================= */
 
-  const paymentStatusData = {
-    labels: ["Paid (UPI)", "Paid (Cash)", "Unpaid"],
-    datasets: [
-      {
-        data: [
-          bills.filter(b => b.status === "PAID").length,
-          bills.filter(b => b.status === "CASH").length,
-          bills.filter(b => b.status === "UNPAID").length
-        ],
-        backgroundColor: ["#8b5e3c", "#2a9d8f", "#e76f51"],
-        borderWidth: 0
-      }
-    ]
-  };
+  /* ================= PIE ================= */
+
+const paidUpi = bills.filter(
+  b => b.status === "PAID" && b.payment_mode === "UPI"
+).length;
+
+const paidCash = bills.filter(
+  b => b.status === "PAID" && b.payment_mode === "CASH"
+).length;
+
+const initiated = bills.filter(
+  b => b.status === "PAYMENT_INITIATED"
+).length;
+
+const unpaid = bills.filter(
+  b => b.status === "UNPAID"
+).length;
+
+const paymentStatusData = {
+  labels: ["Paid (UPI)", "Paid (Cash)", "Payment Initiated", "Unpaid"],
+  datasets: [
+    {
+      data: [paidUpi, paidCash, initiated, unpaid],
+      backgroundColor: ["#8b5e3c", "#2a9d8f", "#3a86ff", "#e76f51"],
+      borderWidth: 0
+    }
+  ]
+};
+
 
   const pieOptions = {
     responsive: true,
@@ -117,7 +138,6 @@ export default function Charts({ bills, otherIncome, expenses, year }) {
     <div className="section-card">
       <h3>Analytics</h3>
 
-      {/* 🔥 PERFECTLY BALANCED BAR + PIE */}
       <div
         style={{
           display: "grid",
@@ -127,18 +147,15 @@ export default function Charts({ bills, otherIncome, expenses, year }) {
           marginTop: "20px"
         }}
       >
-        {/* BAR */}
         <div style={{ height: "300px" }}>
           <Bar data={incomeExpenseData} />
         </div>
 
-        {/* PIE */}
         <div style={{ height: "300px" }}>
           <Pie data={paymentStatusData} options={pieOptions} />
         </div>
       </div>
 
-      {/* 📈 YEARLY EXPENSE */}
       <div style={{ marginTop: "40px" }}>
         <Line data={yearlyExpenseData} />
       </div>

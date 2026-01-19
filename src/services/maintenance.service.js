@@ -136,11 +136,14 @@ export const getReceivables = async (month, year) => {
 
   if (error) throw error;
 
-  return data.map(bill => ({
-    id: bill.id,
-    amount: bill.amount,
-    name: bill.residents?.name ?? "—",
-    house_no: bill.residents?.houses?.unit_number ?? "—"
-  }));
+  return {
+    data: (data || []).map(bill => ({
+      id: bill.id,
+      amount: bill.amount,
+      name: bill.residents?.name ?? "—",
+      house_no: bill.residents?.houses?.unit_number ?? "—"
+    }))
+  };
 };
+
 
