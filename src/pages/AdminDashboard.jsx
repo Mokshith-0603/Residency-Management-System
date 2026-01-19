@@ -38,9 +38,10 @@ export default function AdminDashboard() {
           <Card
             icon="😊"
             title="Happy Residents"
-            value={`${stats.residents}+`}
+            value={stats.happyResidents}
             desc="Community satisfaction"
           />
+
           <Card
             icon="🏠"
             title="No. of Houses"

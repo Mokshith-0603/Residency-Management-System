@@ -3,21 +3,36 @@ import { supabase } from "../lib/supabaseClient";
 /* ---------------- ADMIN DASHBOARD ---------------- */
 
 export async function getAdminDashboardStats() {
-  const [
-    { count: residentCount },
-    { count: houseCount }
-  ] = await Promise.all([
-    supabase.from("residents").select("*", { count: "exact", head: true }),
-    supabase.from("houses").select("*", { count: "exact", head: true }),
+  /* ================= COUNTS ================= */
+  const [{ count: residentCount }] = await Promise.all([
+    supabase.from("residents").select("*", { count: "exact", head: true })
   ]);
+
+  /* ================= TOTAL INCOME ================= */
+  const { data: incomeData } = await supabase
+    .from("maintenance_bills")
+    .select("amount")
+    .eq("status", "PAID");
+
+  const totalIncome =
+    incomeData?.reduce((sum, i) => sum + Number(i.amount), 0) || 0;
+
+  /* ================= TOTAL EXPENSE ================= */
+  const { data: expenseData } = await supabase
+    .from("expenses")
+    .select("amount");
+
+  const totalExpense =
+    expenseData?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
 
   return {
     residents: residentCount || 0,
-    houses: houseCount || 0,
-    amenities: 30, // static for now
+    houses: residentCount || 0, // house = resident as per your rule
+    happyResidents: (residentCount || 0) * 5,
+    amenities: 30,
     pendingReports: 0,
-    expenses: 3950,
-    income: 33500,
+    expenses: totalExpense,
+    income: totalIncome
   };
 }
 
@@ -27,18 +42,20 @@ export async function getResidentDashboard(userId) {
   const { data, error } = await supabase
     .from("residents")
     .select(`
-      profile,
-      houses ( house_no )
+      name,
+      phone,
+      status,
+      houses ( unit_number )
     `)
     .eq("user_id", userId)
     .single();
 
-  if (error) throw error;
+  if (error || !data) return null;
 
   return {
-    name: data.profile.name,
-    phone: data.profile.phone,
-    status: data.profile.status,
-    houseNo: data.houses.house_no,
+    name: data.name,
+    phone: data.phone,
+    status: data.status,
+    houseNo: data.houses?.unit_number ?? "—"
   };
 }
