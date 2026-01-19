@@ -22,6 +22,8 @@ import {
 
 import { getOtherIncome } from "../services/income.service";
 import { getExpenses } from "../services/expense.service";
+import { getResidentsMap } from "../services/residents.service";
+
 
 /* ================= UTILS ================= */
 import { generateMaintenancePDF } from "../utils/pdfGenerator";
@@ -46,31 +48,28 @@ export default function AdminMaintenance() {
      LOAD ALL DATA (MEMOIZED – IMPORTANT)
   ================================================= */
   const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const [
-        billsRes,
-        receivableRes,
-        otherIncomeRes,
-        expensesRes
-      ] = await Promise.all([
-        getBillsByMonthYear(month, year),
-        getReceivables(month, year),
-        getOtherIncome(month, year),
-        getExpenses(month, year)
-      ]);
+    const [billsRaw, residentsMap] = await Promise.all([
+      getBillsByMonthYear(month, year),
+      getResidentsMap()
+    ]);
 
-      setBills(billsRes?.data || []);
-      setReceivables(receivableRes?.data || []);
-      setOtherIncome(otherIncomeRes?.data || []);
-      setExpenses(expensesRes?.data || []);
-    } catch (error) {
-      console.error("Failed to load maintenance data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [month, year]);
+    const bills = billsRaw.map(b => ({
+      ...b,
+      name: residentsMap[b.resident_id]?.name ?? "—",
+      house_no: residentsMap[b.resident_id]?.house_no ?? "—"
+    }));
+
+    setBills(bills);
+  } catch (error) {
+    console.error("Failed to load maintenance data:", error);
+  } finally {
+    setLoading(false);
+  }
+}, [month, year]);
+
 
   /* =================================================
      ENSURE MONTHLY BILLS EXIST (RUNS FIRST)

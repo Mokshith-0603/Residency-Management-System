@@ -22,48 +22,56 @@ export const getActiveResidents = async () => {
    GET BILLS BY MONTH & YEAR
 -------------------------------------------------- */
 export const getBillsByMonthYear = async (month, year) => {
-  return await supabase
+  const { data, error } = await supabase
     .from("maintenance_bills")
     .select(`
       id,
+      resident_id,
       amount,
       status,
       month,
       year,
-      payment_mode,
-      residents (
-        name,
-        houses (
-          unit_number
-        )
-      )
+      payment_mode
     `)
     .eq("month", month)
-    .eq("year", year)
-    .order("created_at", { ascending: true });
+    .eq("year", year);
+
+  if (error) throw error;
+  return data || [];
 };
+
+
+
+
+
+
 
 /* --------------------------------------------------
    GENERATE MONTHLY BILLS (PRIMARY & ONLY METHOD)
 -------------------------------------------------- */
 export const generateMonthlyBills = async (month, year, amount) => {
   const residents = await getActiveResidents();
-
   if (!residents.length) return;
 
   const bills = residents.map(r => ({
     resident_id: r.id,
-    house_id: r.house_id,
     month,
     year,
     amount,
     status: "UNPAID"
   }));
 
-  return await supabase
+  const { error } = await supabase
     .from("maintenance_bills")
-    .insert(bills, { ignoreDuplicates: true });
+    .insert(bills);
+
+  // ✅ Ignore duplicate bill errors
+  if (error && error.code !== "23505") {
+    throw error;
+  }
 };
+
+
 
 /* --------------------------------------------------
    PAYMENT ACTIONS
@@ -123,7 +131,7 @@ export const getReceivables = async (month, year) => {
     .select(`
       id,
       amount,
-      residents (
+      residents!maintenance_bills_resident_id_fkey (
         name,
         houses (
           unit_number
