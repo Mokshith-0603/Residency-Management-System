@@ -11,7 +11,15 @@ export const getExpenses = async (month, year) => {
 };
 
 export const addExpense = async (data) => {
-  return await supabase
+  const { data: res, error } = await supabase
     .from("expenses")
-    .insert(data);
+    .insert(data)
+    .select();
+
+  if (error) {
+    console.error("EXPENSE ERROR:", error);
+    throw error;
+  }
+
+  return res;
 };

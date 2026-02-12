@@ -185,7 +185,7 @@ export async function getResidentsDirectory() {
     house_no: r.houses?.unit_number ?? "—",
   }));
 }
-export const getResidentsMap = async () => {
+export async function getResidentsMap() {
   const { data, error } = await supabase
     .from("residents")
     .select(`
@@ -199,7 +199,7 @@ export const getResidentsMap = async () => {
   if (error) throw error;
 
   const map = {};
-  (data || []).forEach(r => {
+  data.forEach(r => {
     map[r.id] = {
       name: r.name,
       house_no: r.houses?.unit_number ?? "—"
@@ -207,4 +207,4 @@ export const getResidentsMap = async () => {
   });
 
   return map;
-};
+}

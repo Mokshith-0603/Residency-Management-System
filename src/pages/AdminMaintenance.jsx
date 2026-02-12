@@ -188,6 +188,7 @@ export default function AdminMaintenance() {
             month={month}
             year={year}
             reload={loadData}
+            expenses={expenses}
           />
 
           {/* ================= SUMMARY ================= */}

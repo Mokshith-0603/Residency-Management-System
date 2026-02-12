@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { addExpense } from "../services/expense.service";
 
-export default function Expenses({ month, year, reload }) {
+export default function Expenses({ month, year, reload, expenses }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
 
   const submit = async () => {
     if (!title || !amount) return;
 
+    const today = new Date();
+
     await addExpense({
       title,
       amount: Number(amount),
-      date: new Date(),
-      month,
-      year
+      date: today.toISOString().split("T")[0],
+      month: today.getMonth() + 1,
+      year: today.getFullYear()
     });
 
     setTitle("");
@@ -41,6 +43,32 @@ export default function Expenses({ month, year, reload }) {
           Add Expense
         </button>
       </div>
+
+      {/* EXPENSE TABLE */}
+      <table className="table" style={{ marginTop: "15px" }}>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {expenses.length === 0 && (
+            <tr>
+              <td colSpan="3">No expenses added</td>
+            </tr>
+          )}
+
+          {expenses.map(e => (
+            <tr key={e.id}>
+              <td>{e.title}</td>
+              <td>₹ {e.amount}</td>
+              <td>{e.date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
